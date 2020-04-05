@@ -33,8 +33,9 @@ public class ConnectionPool implements IConnectionPool {
                 String user = "sagivMasterUser";
                 String password = "Solomonsagivawsmaster12";
 
-                connectionPool = ConnectionPool.create( url, user, password );
+                connectionPool = ConnectionPool.create( url, userTest, password );
             } catch ( Exception e ) {
+                e.printStackTrace();
 //                Arik.getInstance( ).sendMessage( e.getMessage( ) + "\n" + e.getCause( ) );
             }
         }

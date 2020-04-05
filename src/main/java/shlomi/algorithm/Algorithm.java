@@ -21,6 +21,9 @@ public abstract class Algorithm implements IAlgorithm {
         positions = new Positions( client );
     }
 
+    public Algorithm() {
+    }
+
     //  Getters and Setters
     public BASE_CLIENT_OBJECT getClient() {
         return client;

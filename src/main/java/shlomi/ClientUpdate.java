@@ -1,45 +1,51 @@
 package shlomi;
 
+import lists.MyChartPoint;
 import options.Options;
+import org.jfree.data.time.Millisecond;
+import org.jfree.data.time.Second;
 import serverObjects.BASE_CLIENT_OBJECT;
+import serverObjects.indexObjects.TA35;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.Locale;
 
 public class ClientUpdate {
 
-    BASE_CLIENT_OBJECT client;
     Options mainOptions;
-    Options quarterOptions;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern( "HH:mm:ss", Locale.US );
 
-    public ClientUpdate( BASE_CLIENT_OBJECT client ) {
-        this.client = client;
-        mainOptions = client.getOptionsHandler( ).getMainOptions( );
-        quarterOptions = client.getOptionsHandler( ).getOptionsQuarter( );
+    public ClientUpdate( ) {
+        mainOptions = TA35.getInstance().getOptionsHandler( ).getMainOptions( );
     }
 
     public void updateDayData( ResultSet rs ) throws SQLException, DateTimeParseException {
 
-        client.getDateTimeHandler().setDate( rs.getString( "date" ) );
-        client.getDateTimeHandler().setTime( formatter.format( LocalTime.parse( rs.getString( "time" ) ) ) );
+        System.out.println(TA35.getInstance().hashCode() );
 
-        mainOptions.setContract( rs.getDouble( "con" ) );
-//            mainOptions.getOpAvgMoveService( ).setMove( rs.getDouble( "opAvgMove" ) );
+        TA35.getInstance().getDateTimeHandler().setDate( rs.getString( "date" ) );
+        TA35.getInstance().getDateTimeHandler().setTime( formatter.format( LocalTime.parse( rs.getString( "time" ) ) ) );
 
-        mainOptions.setOpAvg( rs.getDouble( "op_avg" ) );
-        quarterOptions.setContract( rs.getDouble( "conQuarter" ) );
-        client.setIndex( rs.getDouble( "ind" ) );
-        client.setConUp( rs.getInt( "con_up" ) );
-        client.setConDown( rs.getInt( "con_down" ) );
-        client.setIndexUp( rs.getInt( "index_up" ) );
-        client.setIndexDown( rs.getInt( "index_down" ) );
-        client.setBase( rs.getDouble( "base" ) );
-        client.handleHigh( );
-        client.handleLow( );
+        mainOptions.setContract( rs.getDouble( "fut" ) );
+        mainOptions.setOpAvg( rs.getDouble( "opAvg" ) );
+        TA35.getInstance().setIndex( rs.getDouble( "ind" ) );
+        TA35.getInstance().setConUp( rs.getInt( "futUp" ) );
+        TA35.getInstance().setConDown( rs.getInt( "futDown" ) );
+        TA35.getInstance().setIndexUp( rs.getInt( "indUp" ) );
+        TA35.getInstance().setIndexDown( rs.getInt( "indDown" ) );
+        TA35.getInstance().setBasketUp( rs.getInt( "basketUp" ) );
+        TA35.getInstance().setBasketDown( rs.getInt( "basketDown" ) );
+        TA35.getInstance().setBase( rs.getDouble( "base" ));
+        TA35.getInstance().getIndexList().add(  new MyChartPoint( rs.getString( "time" ), rs.getDouble( "ind" ) )  );
+        mainOptions.setContractBidAskCounter( rs.getInt( "futBidAskCounter" ) );
+        mainOptions.getConBidAskCounterList().add( new MyChartPoint( rs.getString( "time" ) , rs.getInt( "futBidAskCounter" ) ) );
+
+        TA35.getInstance().handleHigh( );
+        TA35.getInstance().handleLow( );
     }
 }

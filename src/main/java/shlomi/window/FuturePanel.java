@@ -58,7 +58,6 @@ public class FuturePanel extends MyGuiComps.MyPanel implements IMyPanels {
     BASE_CLIENT_OBJECT client;
 
     Options optionsMonth;
-    Options optionsQuarter;
     Options mainOptions;
 
     public FuturePanel() {
@@ -68,7 +67,6 @@ public class FuturePanel extends MyGuiComps.MyPanel implements IMyPanels {
     public void setClient( BASE_CLIENT_OBJECT client ) {
         this.client = client;
         optionsMonth = client.getOptionsHandler( ).getOptionsMonth( );
-        optionsQuarter = client.getOptionsHandler( ).getOptionsQuarter( );
         mainOptions = client.getOptionsHandler( ).getMainOptions( );
     }
 
@@ -263,23 +261,10 @@ public class FuturePanel extends MyGuiComps.MyPanel implements IMyPanels {
         opAvgField.colorForge( mainOptions.getOpAvg( ), L.format100( ) );
         opField.colorBack( mainOptions.getOp( ), L.format100( ) );
 
-        // Equal move OpAvg
-        opAvgEqualeMoveField.colorForge( mainOptions.getOpAvgMoveService( ).getMove( ), L.format100( ) );
-
-        // Quarter
-        opQuarterField.colorBack( optionsQuarter.getOp( ), L.format100( ) );
-        opAvgQuarterField.colorForge( optionsQuarter.getOpAvg( ), L.format100( ) );
-        contractQuarterField.setText( L.format100( client.getOptionsHandler( ).getOptionsQuarter( ).getContract( ) ) );
-
         // Races and roll
         // Races
         conRacesField.colorForge( client.getFutSum( ) );
         indRacesField.colorForge( client.getIndexSum( ) );
-
-        // Roll
-        double month = optionsMonth.getContract( );
-        double quarter = optionsQuarter.getContract( );
-        rollField.colorForge( quarter - month, L.format100( ) );
 
     }
 

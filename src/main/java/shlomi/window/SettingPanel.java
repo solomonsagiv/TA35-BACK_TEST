@@ -1,8 +1,10 @@
 package shlomi.window;
 
+import charts.myCharts.IndexVsConBidAskCounterChart;
 import dataBase.mySql.MySql;
 import locals.Themes;
 import serverObjects.indexObjects.SpxCLIENTObject;
+import serverObjects.indexObjects.TA35;
 import shlomi.MainThread;
 import shlomi.algorithm.AlgoTwo;
 
@@ -20,6 +22,7 @@ public class SettingPanel extends MyGuiComps.MyPanel {
     MyGuiComps.MyButton continueBtn;
     MyGuiComps.MyButton slowerBtn;
     MyGuiComps.MyButton finishBtn;
+    MyGuiComps.MyButton chartBtn;
     public static MyGuiComps.MyTextField targetDateField;
 
     Object[] items = { "none", "1", "2" };
@@ -36,21 +39,22 @@ public class SettingPanel extends MyGuiComps.MyPanel {
             public void actionPerformed( ActionEvent actionEvent ) {
                 try {
 
-                    SpxCLIENTObject spx = new SpxCLIENTObject( );
-                    ShlomiWindow.futurePanel.setClient( spx );
-
                     String dateString = targetDateField.getText( );
-                    String query = String.format( "select date, exp_name, time, con, conQuarter, ind, con_up, con_down, index_up, index_down, base, op_avg, opAvgMove " +
-                            "from stocks.spx where date = '%s';", dateString );
+                    String query = String.format( "select date, time, fut, ind, futUp, futDown, indUp, indDown, basketUp, basketDown, futBidAskCounter, opAvg, base from ta35.ta35data " +
+                            " where date = '%s';", dateString );
 
                     // Load data from MYSQL
                     ResultSet rs = MySql.select( query );
+
                     try {
                         mainThread.getHandler( ).close( );
                     } catch ( Exception e ) {
                     }
 
-                    mainThread = new MainThread( spx, rs, new AlgoTwo( spx, 0 ) );
+                    TA35.getNewInstance();
+                    System.out.println(" Client: " + TA35.getInstance().hashCode() );
+                    ShlomiWindow.futurePanel.setClient( TA35.getInstance() );
+                    mainThread = new MainThread( rs, new AlgoTwo( TA35.getInstance(), 0 ) );
                     mainThread.getHandler( ).start( );
 
                     startBtn.setEnabled( false );
@@ -99,6 +103,18 @@ public class SettingPanel extends MyGuiComps.MyPanel {
             @Override
             public void actionPerformed( ActionEvent actionEvent ) {
                 mainThread.finish();
+            }
+        } );
+
+        // Chart
+        chartBtn.addActionListener( new ActionListener( ) {
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+                IndexVsConBidAskCounterChart chart = new IndexVsConBidAskCounterChart( );
+                chart.createChart();
+
+                MainThread.chart = chart;
+
             }
         } );
     }
@@ -154,6 +170,11 @@ public class SettingPanel extends MyGuiComps.MyPanel {
         targetDateField.setWidth( 90 );
         targetDateField.setXY( 155, 35 );
         add( targetDateField );
+
+        // Chart
+        chartBtn = new MyGuiComps.MyButton( "Chart" );
+        chartBtn.setXY( targetDateField.getX(), targetDateField.getY() + targetDateField.getHeight() + 5 );
+        add( chartBtn );
 
     }
 }

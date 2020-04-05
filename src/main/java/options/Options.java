@@ -2,6 +2,7 @@ package options;
 
 import OPs.EqualMoveService;
 import OPs.OpAvgMoveService;
+import lists.MyChartList;
 import locals.L;
 import org.json.JSONObject;
 import serverObjects.BASE_CLIENT_OBJECT;
@@ -26,8 +27,6 @@ public class Options {
     BASE_CLIENT_OBJECT client;
     double bidMin = 0;
     double askMax = 0;
-    EqualMoveService equalMoveService;
-    OpAvgMoveService opAvgMoveService;
     List< Double > opList = new ArrayList<>( );
     List< Double > opAvgList = new ArrayList<>( );
     List< Double > conList = new ArrayList<>( );
@@ -53,6 +52,7 @@ public class Options {
     private double currStrike = 0;
     private double contract = 0;
     private double opAvg = 0;
+    private MyChartList conBidAskCounterList = new MyChartList();
 
     public Options( BASE_CLIENT_OBJECT client, int type ) {
         this.type = type;
@@ -63,9 +63,6 @@ public class Options {
         strikes = new ArrayList<>( );
         optionsMap = new HashMap<>( );
 
-        // Services
-        equalMoveService = new EqualMoveService( client, this, client.getEqualMovePlag( ) );
-        opAvgMoveService = new OpAvgMoveService( client, this, client.getEqualMovePlag( ) );
 
     }
 
@@ -525,7 +522,6 @@ public class Options {
         }
 
         mainJson.put( "contractBidAskCounter", getContractBidAskCounter( ) );
-        mainJson.put( "equalMove", getEqualMoveService( ).getMove( ) );
         mainJson.put( "con", getContract( ) );
         mainJson.put( "props", getProps( ) );
         mainJson.put( "data", optionsData );
@@ -578,7 +574,6 @@ public class Options {
 
     public void setDataFromJson( JSONObject json ) {
 
-        getEqualMoveService( ).setMove( json.getDouble( "equalMove" ) );
         setContractBidAskCounter( json.getInt( "contractBidAskCounter" ) );
         setPropsDataFromJson( json.getJSONObject( "props" ) );
         setOptionsData( json.getJSONObject( "data" ) );
@@ -634,14 +629,6 @@ public class Options {
 
     public double absolute( double d ) {
         return Math.abs( d );
-    }
-
-    public EqualMoveService getEqualMoveService() {
-        return equalMoveService;
-    }
-
-    public OpAvgMoveService getOpAvgMoveService() {
-        return opAvgMoveService;
     }
 
     public LocalDate getExpDate() {
@@ -781,6 +768,14 @@ public class Options {
             }
         }
         return daysToExp;
+    }
+
+    public MyChartList getConBidAskCounterList() {
+        return conBidAskCounterList;
+    }
+
+    public void setConBidAskCounterList( MyChartList conBidAskCounterList ) {
+        this.conBidAskCounterList = conBidAskCounterList;
     }
 
     public void setDaysToExp( double daysToExp ) {

@@ -13,12 +13,10 @@ public class MyChartContainer extends JFrame {
     // Index series array
     MyChart[] charts;
 
-    BASE_CLIENT_OBJECT client;
     String name;
 
-    public MyChartContainer( BASE_CLIENT_OBJECT client, MyChart[] charts, String name ) {
+    public MyChartContainer( MyChart[] charts, String name ) {
         this.charts = charts;
-        this.client = client;
         this.name = name;
         init( );
     }
@@ -60,11 +58,6 @@ public class MyChartContainer extends JFrame {
 
 
     public void onClose( WindowEvent e ) {
-
-        for ( MyChart myChart : charts ) {
-            myChart.getUpdater().getHandler().close();
-        }
-
         dispose( );
     }
 

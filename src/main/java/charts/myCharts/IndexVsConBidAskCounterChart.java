@@ -8,7 +8,10 @@ import shlomi.MainThread;
 
 import java.awt.*;
 
-public class IndexBidAskCounterIndexChart extends MyChartCreator {
+public class IndexVsConBidAskCounterChart extends MyChartCreator {
+
+    MyChart indexChart;
+    MyChart indexBidAskCounterChart;
 
     @Override
     public void createChart() {
@@ -41,23 +44,23 @@ public class IndexBidAskCounterIndexChart extends MyChartCreator {
         series[0] = index;
 
         // Chart
-        MyChart indexChart = new MyChart( series, props );
-
+        indexChart = new MyChart( series, props );
 
         // ---------- Chart 2 ---------- //
         // Index
-        MyTimeSeries indexBidAskCounter = new MyTimeSeries( "Counter", Themes.ORANGE, 1.5f, props, TA35.getInstance().getIndexBidAskCounterList() ) {
+        MyTimeSeries indexBidAskCounter = new MyTimeSeries( "Counter", Themes.ORANGE, 1.5f, props, TA35.getInstance().getOptionsHandler().getMainOptions().getConBidAskCounterList() ) {
             @Override
             public double getData() {
-                return TA35.getInstance().getIndexBidAskCounter();
+                return TA35.getInstance().getOptionsHandler().getMainOptions().getContractBidAskCounter();
             }
         };
 
         series = new MyTimeSeries[1];
         series[0] = indexBidAskCounter;
 
+        indexBidAskCounterChart = new MyChart( series, props );
+
         // -------------------- Chart -------------------- //
-        MyChart indexBidAskCounterChart = new MyChart(  series, props );
 
         // ----- Charts ----- //
         MyChart[] charts = { indexChart, indexBidAskCounterChart };
@@ -66,7 +69,12 @@ public class IndexBidAskCounterIndexChart extends MyChartCreator {
         MyChartContainer chartContainer = new MyChartContainer( charts, getClass().getName() );
         chartContainer.create();
 
-
     }
+
+    public void doWork() {
+        indexChart.doWork();
+        indexBidAskCounterChart.doWork();
+    }
+
 
 }

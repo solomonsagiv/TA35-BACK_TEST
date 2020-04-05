@@ -4,6 +4,7 @@ import arik.Arik;
 import arik.locals.Emojis;
 import dataBase.mySql.MySqlService;
 import dataBase.mySql.mySqlComps.MyTableHandler;
+import lists.MyChartList;
 import locals.L;
 import options.OptionsHandler;
 import service.MyServiceHandler;
@@ -18,7 +19,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class BASE_CLIENT_OBJECT implements IBaseClient {
 
@@ -33,10 +33,13 @@ public abstract class BASE_CLIENT_OBJECT implements IBaseClient {
     OptionsHandler optionsHandler;
     // Services
     MySqlService mySqlService;
-    List indexList = new ArrayList< Double >( );
-    List indexBidList = new ArrayList< Double >( );
-    List indexAskList = new ArrayList< Double >( );
-    List indexRacesList = new ArrayList< Double >( );
+
+    MyChartList indexList = new MyChartList( );
+    MyChartList indexBidList = new MyChartList( );
+    MyChartList indexAskList = new MyChartList( );
+    MyChartList indexRacesList = new MyChartList( );
+    MyChartList indexBidAskCounterList = new MyChartList( );
+
     private double startStrike;
     private double endStrike;
     private LocalTime startOfIndexTrading;
@@ -75,7 +78,11 @@ public abstract class BASE_CLIENT_OBJECT implements IBaseClient {
     private double low = 0;
     private double base = 0;
     private int futureBidAskCounter = 0;
+    private int indexBidAskCounter = 0;
     private double indexBidAskMargin = 0;
+    private int basketUp = 0;
+    private int basketDown = 0;
+
     // Races
     private double racesMargin = 0;
     private double optimiPesimiMargin = 0;
@@ -100,9 +107,9 @@ public abstract class BASE_CLIENT_OBJECT implements IBaseClient {
         initTablesHandlers( );
 
         // MyServices
-        mySqlService = new MySqlService( this );
-        clientUpdate = new ClientUpdate( this );
-        dateTimeHandler = new DateTimeHandler();
+//        mySqlService = new MySqlService( this );
+//        clientUpdate = new ClientUpdate( );
+        dateTimeHandler = new DateTimeHandler( );
 
     }
 
@@ -275,7 +282,6 @@ public abstract class BASE_CLIENT_OBJECT implements IBaseClient {
         text += "Close: " + index + "\n";
         text += "OP avg: " + L.format100( getOptionsHandler( ).getMainOptions( ).getContract( ) ) + "\n";
         text += "Ind races: " + getIndexSum( ) + "\n";
-        text += "Avg move: " + L.format100( getOptionsHandler( ).getMainOptions( ).getOpAvgMoveService( ).getMove( ) ) + "\n";
         text += "Contract counter: " + getOptionsHandler( ).getMainOptions( ).getContractBidAskCounter( ) + "\n";
 
         return text;
@@ -528,19 +534,27 @@ public abstract class BASE_CLIENT_OBJECT implements IBaseClient {
         this.stocksNames = stocksNames;
     }
 
-    public List getIndexList() {
+    public MyChartList getIndexList() {
         return indexList;
     }
 
-    public List getIndexBidList() {
+    public MyChartList getIndexBidAskCounterList() {
+        return indexBidAskCounterList;
+    }
+
+    public void setIndexBidAskCounterList( MyChartList indexBidAskCounterList ) {
+        this.indexBidAskCounterList = indexBidAskCounterList;
+    }
+
+    public MyChartList getIndexBidList() {
         return indexBidList;
     }
 
-    public List getIndexAskList() {
+    public MyChartList getIndexAskList() {
         return indexAskList;
     }
 
-    public List getIndexRacesList() {
+    public MyChartList getIndexRacesList() {
         return indexRacesList;
     }
 
@@ -554,6 +568,34 @@ public abstract class BASE_CLIENT_OBJECT implements IBaseClient {
 
     public ClientUpdate getClientUpdate() {
         return clientUpdate;
+    }
+
+    public int getIndexBidAskCounter() {
+        return indexBidAskCounter;
+    }
+
+    public void setIndexBidAskCounter( int indexBidAskCounter ) {
+        this.indexBidAskCounter = indexBidAskCounter;
+    }
+
+    public int getBasketUp() {
+        return basketUp;
+    }
+
+    public void setBasketUp( int basketUp ) {
+        this.basketUp = basketUp;
+    }
+
+    public int getBasketDown() {
+        return basketDown;
+    }
+
+    public void setBasketDown( int basketDown ) {
+        this.basketDown = basketDown;
+    }
+
+    public int getBaskets() {
+        return basketUp - basketDown;
     }
 
     @Override

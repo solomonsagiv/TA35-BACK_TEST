@@ -4,15 +4,19 @@ import lists.MyChartList;
 import lists.MyChartPoint;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.RegularTimePeriod;
+import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
+import org.jfree.data.xy.XYSeries;
 
 import java.awt.*;
 import java.util.Date;
 
-public abstract class MyTimeSeries extends TimeSeries implements ITimeSeries {
+public abstract class MyTimeSeries extends XYSeries implements ITimeSeries {
 
     public static final int TIME = 0;
     public static final int VALUE = 1;
+
+    int x = 0;
 
     private Color color;
     private float stokeSize;
@@ -27,17 +31,18 @@ public abstract class MyTimeSeries extends TimeSeries implements ITimeSeries {
         this.myChartList = myChartList;
     }
 
-    public double add( RegularTimePeriod timePeriod ) {
+    public double add() {
         double data;
         // live data
         if ( props.getBool( ChartPropsEnum.IS_LIVE ) ) {
             data = getData();
-            addOrUpdate( timePeriod, data );
+            add( x, data );
         } else {
             MyChartPoint point = myChartList.getLast();
             data = point.getY();
-            addOrUpdate( new Millisecond( new Date(point.getX())), data );
+            add(x , data );
         }
+        x++;
         return data;
     }
 

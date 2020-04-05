@@ -134,20 +134,6 @@ public class MySumTable extends MyTableSql {
             }
         };
 
-        equalMove = new MyColumnSql<>( this, "equalMove", MyColumnSql.DOUBLE ) {
-            @Override
-            public Double getObject() {
-                return client.getOptionsHandler( ).getMainOptions( ).getEqualMoveService( ).getMove( );
-            }
-        };
-
-        opAvgMove = new MyColumnSql<>( this, "opAvgMove", MyColumnSql.DOUBLE ) {
-            @Override
-            public Double getObject() {
-                return client.getOptionsHandler( ).getMainOptions( ).getOpAvgMoveService( ).getMove( );
-            }
-        };
-
     }
 
     @Override

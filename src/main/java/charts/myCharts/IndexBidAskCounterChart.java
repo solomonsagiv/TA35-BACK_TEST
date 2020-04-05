@@ -3,13 +3,10 @@ package charts.myCharts;
 import charts.myChart.*;
 import locals.Themes;
 import serverObjects.BASE_CLIENT_OBJECT;
+import serverObjects.indexObjects.TA35;
+import shlomi.MainThread;
 
 public class IndexBidAskCounterChart extends MyChartCreator {
-
-    // Constructor
-    public IndexBidAskCounterChart( BASE_CLIENT_OBJECT client ) {
-        super( client );
-    }
 
     @Override
     public void createChart() {
@@ -31,10 +28,10 @@ public class IndexBidAskCounterChart extends MyChartCreator {
 
         // ---------- Chart 2 ---------- //
         // Index
-        MyTimeSeries indexBidAskCounter = new MyTimeSeries( "Counter", Themes.ORANGE, 1.5f, props, client.getIndexBidAskCounterList() ) {
+        MyTimeSeries indexBidAskCounter = new MyTimeSeries( "Counter", Themes.ORANGE, 1.5f, props, TA35.getInstance().getIndexBidAskCounterList() ) {
             @Override
             public double getData() {
-                return client.getIndexBidAskCounter();
+                return TA35.getInstance().getIndexBidAskCounter();
             }
         };
 
@@ -42,13 +39,13 @@ public class IndexBidAskCounterChart extends MyChartCreator {
         series[0] = indexBidAskCounter;
 
         // -------------------- Chart -------------------- //
-        MyChart indexBidAskCounterChart = new MyChart( client, series, props );
+        MyChart indexBidAskCounterChart = new MyChart( series, props );
 
         // ----- Charts ----- //
         MyChart[] charts = { indexBidAskCounterChart };
 
         // ----- Container ----- //
-        MyChartContainer chartContainer = new MyChartContainer( client, charts, getClass().getName() );
+        MyChartContainer chartContainer = new MyChartContainer( charts, getClass().getName() );
         chartContainer.create();
 
 

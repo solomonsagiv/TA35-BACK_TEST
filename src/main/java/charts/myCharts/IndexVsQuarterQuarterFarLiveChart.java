@@ -1,50 +1,14 @@
 package charts.myCharts;
 
 import charts.myChart.*;
-import locals.L;
 import locals.Themes;
-import options.OptionsEnum;
 import serverObjects.BASE_CLIENT_OBJECT;
-import serverObjects.indexObjects.Spx;
+import serverObjects.indexObjects.TA35;
+import shlomi.MainThread;
 
 import java.awt.*;
-import java.util.Random;
-import java.util.Scanner;
 
 public class IndexVsQuarterQuarterFarLiveChart extends MyChartCreator {
-
-
-    public static void main( String[] args ) throws InterruptedException {
-        Spx spx = Spx.getInstance();
-        IndexVsQuarterQuarterFarLiveChart testNewChart = new IndexVsQuarterQuarterFarLiveChart(spx);
-        testNewChart.createChart();
-
-        while (true) {
-
-            System.out.println( "Enter future: " );
-            String input = new Scanner( System.in ).nextLine();
-
-            double d = new Random(  ).nextDouble() * 10;
-
-            if ( !input.isEmpty() ) {
-                d = L.dbl( input );
-            }
-
-            spx.setIndex( d );
-            spx.setIndexBid( d - 2 );
-            spx.setIndexAsk( d + 1 );
-            spx.getOptionsHandler().getOptions( OptionsEnum.QUARTER ).setContract( d - 1 );
-            spx.getOptionsHandler().getOptions( OptionsEnum.QUARTER_FAR ).setContract( d + 2 );
-
-            Thread.sleep(200);
-        }
-
-    }
-
-    // Constructor
-    public IndexVsQuarterQuarterFarLiveChart( BASE_CLIENT_OBJECT client ) {
-        super( client );
-    }
 
     @Override
     public void createChart() {
@@ -64,55 +28,40 @@ public class IndexVsQuarterQuarterFarLiveChart extends MyChartCreator {
 
         // ----- Chart 1 ----- //
         // Index
-        MyTimeSeries index = new MyTimeSeries( "Index", Color.BLACK, 2.25f, props, client.getIndexList() ) {
+        MyTimeSeries index = new MyTimeSeries( "Index", Color.BLACK, 2.25f, props, TA35.getInstance().getIndexList() ) {
             @Override
             public double getData() {
-                return client.getIndex();
+                return TA35.getInstance().getIndex();
             }
         };
 
         // Index
-        MyTimeSeries bid = new MyTimeSeries( "Bid", Themes.BLUE, 2.25f, props, client.getIndexBidList() ) {
+        MyTimeSeries bid = new MyTimeSeries( "Bid", Themes.BLUE, 2.25f, props, TA35.getInstance().getIndexBidList() ) {
             @Override
             public double getData() {
-                return client.getIndexBid();
+                return TA35.getInstance().getIndexBid();
             }
         };
 
         // Index
-        MyTimeSeries ask = new MyTimeSeries( "Ask", Themes.RED, 2.25f, props, client.getIndexAskList() ) {
+        MyTimeSeries ask = new MyTimeSeries( "Ask", Themes.RED, 2.25f, props, TA35.getInstance().getIndexAskList() ) {
             @Override
             public double getData() {
-                return client.getIndexAsk();
+                return TA35.getInstance().getIndexAsk();
             }
         };
 
-        // Future
-        MyTimeSeries quarter = new MyTimeSeries( "Quarter", Themes.GREEN, 2.25f, props, null ) {
-            @Override
-            public double getData() {
-                return client.getOptionsHandler().getOptions( OptionsEnum.QUARTER ).getContract();
-            }
-        };
 
-        // Future
-        MyTimeSeries quarterFar = new MyTimeSeries( "QuarterFar", Themes.VERY_LIGHT_BLUE, 2.25f, props, null ) {
-            @Override
-            public double getData() {
-                return client.getOptionsHandler().getOptions( OptionsEnum.QUARTER_FAR ).getContract();
-            }
-        };
-
-        MyTimeSeries[] series = {index, bid, ask, quarter, quarterFar};
+        MyTimeSeries[] series = { index, bid, ask };
 
         // Chart
-        MyChart chart = new MyChart( client, series, props );
+        MyChart chart = new MyChart( series, props );
 
         // ----- Charts ----- //
         MyChart[] charts = { chart };
 
         // ----- Container ----- //
-        MyChartContainer chartContainer = new MyChartContainer( client, charts, getClass().getName() );
+        MyChartContainer chartContainer = new MyChartContainer( charts, getClass().getName() );
         chartContainer.create();
 
 

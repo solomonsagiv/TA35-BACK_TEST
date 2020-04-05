@@ -47,7 +47,7 @@ public class MyGuiComps {
             setFont( Themes.VEDANA_12 );
             setBackground( Themes.GREY_LIGHT );
             setBorder( null );
-//            setLayout( null );
+            setLayout( null );
         }
 
         public void setXY( int x, int y ) {

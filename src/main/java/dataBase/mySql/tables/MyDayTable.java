@@ -66,24 +66,10 @@ public class MyDayTable extends MyTableSql {
             }
         };
 
-        conDay = new MyColumnSql<>( this, "conDay", MyColumnSql.DOUBLE ) {
-            @Override
-            public Double getObject() {
-                return client.getOptionsHandler( ).getOptionsDay( ).getContract( );
-            }
-        };
-
         conMonth = new MyColumnSql<>( this, "conMonth", MyColumnSql.DOUBLE ) {
             @Override
             public Double getObject() {
                 return client.getOptionsHandler( ).getOptionsMonth( ).getContract( );
-            }
-        };
-
-        conQuarter = new MyColumnSql<>( this, "conQuarter", MyColumnSql.DOUBLE ) {
-            @Override
-            public Double getObject() {
-                return client.getOptionsHandler( ).getOptionsQuarter( ).getContract( );
             }
         };
 
@@ -140,20 +126,6 @@ public class MyDayTable extends MyTableSql {
             @Override
             public Double getObject() {
                 return client.getOptionsHandler( ).getMainOptions( ).getOpAvg( );
-            }
-        };
-
-        equalMove = new MyColumnSql<>( this, "equalMove", MyColumnSql.DOUBLE ) {
-            @Override
-            public Double getObject() {
-                return client.getOptionsHandler( ).getMainOptions( ).getEqualMoveService( ).getMove( );
-            }
-        };
-
-        opAvgMove = new MyColumnSql<>( this, "opAvgMove", MyColumnSql.DOUBLE ) {
-            @Override
-            public Double getObject() {
-                return client.getOptionsHandler( ).getMainOptions( ).getOpAvgMoveService( ).getMove( );
             }
         };
 

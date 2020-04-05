@@ -3,7 +3,6 @@ package options;
 import locals.L;
 import org.json.JSONObject;
 import serverObjects.BASE_CLIENT_OBJECT;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -12,8 +11,6 @@ public class OptionsHandler {
     // Variables
     BASE_CLIENT_OBJECT client;
     private Options optionsMonth;
-    private Options optionsDay;
-    private Options optionsQuarter;
     private HashMap< Integer, Options > optionsMap = new HashMap<>( );
     private ArrayList< Options > optionsList = new ArrayList<>( );
 
@@ -21,17 +18,9 @@ public class OptionsHandler {
     public OptionsHandler( BASE_CLIENT_OBJECT client ) {
         this.client = client;
 
-        optionsDay = new Options( client, Options.DAY);
-        getOptionsList( ).add( optionsDay );
-        getOptionsMap( ).put( optionsDay.getType( ), optionsDay );
-
         optionsMonth = new Options( client, Options.MONTH);
         getOptionsList( ).add( optionsMonth );
         getOptionsMap( ).put( optionsMonth.getType( ), optionsMonth );
-
-        optionsQuarter = new Options( client, Options.QUARTER );
-        getOptionsList( ).add( optionsQuarter );
-        getOptionsMap( ).put( optionsQuarter.getType( ), optionsQuarter );
 
     }
 
@@ -112,14 +101,6 @@ public class OptionsHandler {
 
 
     // Getters and setters
-    public Options getOptionsQuarter() {
-        return optionsQuarter;
-    }
-
-    public Options getOptionsDay() {
-        return optionsDay;
-    }
-
     public Options getOptionsMonth() {
         return optionsMonth;
     }

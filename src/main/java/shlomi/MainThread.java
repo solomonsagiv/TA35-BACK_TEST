@@ -1,8 +1,10 @@
 package shlomi;
 
+import charts.myCharts.IndexVsConBidAskCounterChart;
 import options.Options;
 import serverObjects.BASE_CLIENT_OBJECT;
 import serverObjects.indexObjects.SpxCLIENTObject;
+import serverObjects.indexObjects.TA35;
 import shlomi.algorithm.Algorithm;
 import shlomi.window.DateTimeHandler;
 import shlomi.window.ShlomiWindow;
@@ -14,12 +16,13 @@ import java.time.format.DateTimeParseException;
 
 public class MainThread extends MyThread implements Runnable {
 
-
     public int preSleep = 0;
-    public int sleep = 100;
+    public static int sleep = 100;
     public final int baseSleep = 10;
     Algorithm algorithm;
     ResultSet rs;
+
+    public static IndexVsConBidAskCounterChart chart;
 
     public static final int FORWARD = 0;
     public static final int BACKWARD = 1;
@@ -31,19 +34,27 @@ public class MainThread extends MyThread implements Runnable {
     ClientUpdate clientUpdate;
 
     // Constructor
-    public MainThread( BASE_CLIENT_OBJECT client, ResultSet rs, Algorithm algorithm ) {
-        super( client );
+    public MainThread( ResultSet rs, Algorithm algorithm ) {
+        super( TA35.getInstance() );
+        System.out.println("Client 3: " + TA35.getInstance().hashCode() );
         this.rs = rs;
         this.algorithm = algorithm;
-        clientReset( client );
+        clientReset();
     }
 
-    public void clientReset( BASE_CLIENT_OBJECT client ) {
-        clientUpdate = client.getClientUpdate();
-        mainOptions = client.getOptionsHandler( ).getMainOptions( );
-        algorithm.setClient( client );
-        dateTimeHandler = client.getDateTimeHandler();
-        ShlomiWindow.futurePanel.setClient( getClient( ) );
+    public void clientReset( ) {
+        System.out.println("Client 4: " + TA35.getInstance().hashCode() );
+        clientUpdate = new ClientUpdate();
+        mainOptions = TA35.getInstance().getOptionsHandler( ).getMainOptions( );
+        algorithm.setClient( TA35.getInstance() );
+        dateTimeHandler = TA35.getInstance().getDateTimeHandler();
+        ShlomiWindow.futurePanel.setClient( TA35.getInstance() );
+        sleep = 100;
+
+        if ( chart != null ) {
+            chart.createChart();
+        }
+
     }
 
     @Override
@@ -74,8 +85,12 @@ public class MainThread extends MyThread implements Runnable {
                 // Text
                 text();
 
+                if ( chart != null ) {
+                    chart.doWork( );
+                }
+
                 // TODO shlomi algo
-                algorithm. doAlgo();
+                algorithm.doAlgo();
 
             } catch ( SQLException | DateTimeParseException e ) {
                 e.printStackTrace( );
@@ -92,7 +107,7 @@ public class MainThread extends MyThread implements Runnable {
         ShlomiWindow.futurePanel.setText( );
 
         // Set text
-        ShlomiWindow.updateWindowText( getClient().getDateTimeHandler() );
+        ShlomiWindow.updateWindowText( TA35.getInstance().getDateTimeHandler() );
     }
 
     long startTime = System.currentTimeMillis( );
@@ -101,10 +116,8 @@ public class MainThread extends MyThread implements Runnable {
     private void handlerDays() throws SQLException {
 
         if ( dateTimeHandler.getDate( ) == null || !rs.getString( "date" ).equals( dateTimeHandler.getDate( ).toString( ) ) ) {
-            System.out.println( dateTimeHandler.getDate( ) + " , " + ( int ) getClient( ).getOptionsHandler( ).getMainOptions( ).getOpAvgMoveService( ).getMove( ) + " , " + getClient().getIndexSum() );
-
             setClient( new SpxCLIENTObject( ) );
-            clientReset( getClient( ) );
+            clientReset();
         }
 
         if ( rs.isLast( ) ) {
@@ -119,7 +132,6 @@ public class MainThread extends MyThread implements Runnable {
 
     private void calcs() {
         // OpAvgMove
-        mainOptions.getOpAvgMoveService( ).go( );
     }
 
     public void forward() {

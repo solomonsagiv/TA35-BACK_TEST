@@ -2,18 +2,14 @@ package charts.myCharts;
 
 import charts.myChart.*;
 import locals.Themes;
-import options.OptionsEnum;
 import serverObjects.BASE_CLIENT_OBJECT;
+import serverObjects.indexObjects.TA35;
+import shlomi.MainThread;
 
 import java.awt.*;
 
 public class IndexVsQuarterLiveChart extends MyChartCreator {
 
-    // Constructor
-    public IndexVsQuarterLiveChart( BASE_CLIENT_OBJECT client ) {
-        super( client );
-    }
-    
     @Override
     public void createChart() {
 
@@ -32,47 +28,40 @@ public class IndexVsQuarterLiveChart extends MyChartCreator {
 
         // ----- Chart 1 ----- //
         // Index
-        MyTimeSeries index = new MyTimeSeries( "Index", Color.BLACK, 2.25f, props, client.getIndexList() ) {
+        MyTimeSeries index = new MyTimeSeries( "Index", Color.BLACK, 2.25f, props, TA35.getInstance().getIndexList() ) {
             @Override
             public double getData() {
-                return client.getIndex();
+                return TA35.getInstance().getIndex();
             }
         };
 
         // Index
-        MyTimeSeries bid = new MyTimeSeries( "Bid", Themes.BLUE, 2.25f, props, client.getIndexBidList() ) {
+        MyTimeSeries bid = new MyTimeSeries( "Bid", Themes.BLUE, 2.25f, props, TA35.getInstance().getIndexBidList() ) {
             @Override
             public double getData() {
-                return client.getIndexBid();
+                return TA35.getInstance().getIndexBid();
             }
         };
 
         // Index
-        MyTimeSeries ask = new MyTimeSeries( "Ask", Themes.RED, 2.25f, props, client.getIndexAskList() ) {
+        MyTimeSeries ask = new MyTimeSeries( "Ask", Themes.RED, 2.25f, props, TA35.getInstance().getIndexAskList() ) {
             @Override
             public double getData() {
-                return client.getIndexAsk();
+                return TA35.getInstance().getIndexAsk();
             }
         };
 
-        // Future
-        MyTimeSeries future = new MyTimeSeries( "Index", Themes.GREEN, 2.25f, props, null ) {
-            @Override
-            public double getData() {
-                return client.getOptionsHandler().getOptions( OptionsEnum.QUARTER ).getContract();
-            }
-        };
 
-        MyTimeSeries[] series = {index, bid, ask, future};
+        MyTimeSeries[] series = {index, bid, ask};
 
         // Chart
-        MyChart chart = new MyChart( client, series, props );
+        MyChart chart = new MyChart(  series, props );
 
         // ----- Charts ----- //
         MyChart[] charts = { chart };
 
         // ----- Container ----- //
-        MyChartContainer chartContainer = new MyChartContainer( client, charts, getClass().getName() );
+        MyChartContainer chartContainer = new MyChartContainer( charts, getClass().getName() );
         chartContainer.create();
 
 
